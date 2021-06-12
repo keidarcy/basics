@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import minimist from 'minimist';
 import getStdin from 'get-stdin';
+import { Transform } from 'stream';
 
 const args = minimist(process.argv.slice(2), {
   boolean: ['help', 'in'],
@@ -36,13 +37,19 @@ const error = (msg, includeHelp = false) => {
   }
 };
 
-const processFile = (contents) => {
-  // const contents = fs.readFileSync(filepath, 'utf-8');
-  // console.log(contents);
-  // const contents = fs.readFileSync(filepath);
-  // process.stdout.write(contents);
-  contents = contents.toString().toUpperCase();
-  console.log(contents);
+const processFile = (inStream) => {
+  let outStream = inStream;
+  const upperStream = new Transform({
+    transform(chunk, encoding, cb) {
+      this.push(chunk.toString().toUpperCase());
+      setTimeout(cb, 500);
+    }
+  });
+
+  outStream = outStream.pipe(upperStream);
+
+  const targetStream = process.stdout;
+  outStream.pipe(targetStream);
 };
 
 // printHelp();
@@ -50,15 +57,10 @@ const processFile = (contents) => {
 if (args.help) {
   printHelp();
 } else if (args.in || args._.includes('-')) {
-  getStdin().then(processFile).catch(error);
+  processFile(process.stdin);
 } else if (args.file) {
-  fs.readFile(path.join(BASE_PATH, args.file), (err, contents) => {
-    if (err) {
-      error(err.toString());
-    } else {
-      processFile(contents);
-    }
-  });
+  let stream = fs.createReadStream(path.join(BASE_PATH, args.file));
+  processFile(stream);
 } else {
   error('Incorrect usage.', true);
 }
