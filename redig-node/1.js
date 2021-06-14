@@ -17,16 +17,6 @@ const args = minimist(process.argv.slice(2), {
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const BASE_PATH = path.resolve(process.env.BASE_PATH || dirname);
-// Posix
-// process.stdout.write('hello world\n');
-// console.error('Oops');
-// console.log('hello world');
-
-// node 1.js 1> /dev/null
-// node 1.js 2> /dev/null
-// node 1.js 2> /dev/null 1>&2
-
-// process.stdin.read()
 
 const printHelp = () => {
   console.log('1.js usage:');
@@ -48,10 +38,6 @@ const error = (msg, includeHelp = false) => {
 };
 
 const processFile = (contents) => {
-  // const contents = fs.readFileSync(filepath, 'utf-8');
-  // console.log(contents);
-  // const contents = fs.readFileSync(filepath);
-  // process.stdout.write(contents);
   contents = contents.toString().toUpperCase();
   console.log(contents);
 };
