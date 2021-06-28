@@ -10,6 +10,7 @@ const MAX_CHILDREN = 5;
 
 const delay = util.promisify(setTimeout);
 
+// let x = 0;
 main().catch(console.error);
 
 async function main() {
@@ -22,6 +23,7 @@ async function main() {
     for (let i = 0; i < MAX_CHILDREN; i++) {
       children.push(childProc.spawn('node', ['7-child.js']));
     }
+    // x++;
     let resps = children.map(function wait(child) {
       return new Promise(function c(res) {
         child.on('exit', function (code) {
@@ -30,6 +32,9 @@ async function main() {
         });
       });
     });
+    // if (x > 6) {
+    //   foo();
+    // }
 
     resps = await Promise.all(resps);
     if (resps.filter(Boolean).length == MAX_CHILDREN) {

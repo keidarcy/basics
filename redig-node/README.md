@@ -34,3 +34,12 @@ console.log(contents);
 const contents = fs.readFileSync(filepath);
 process.stdout.write(contents);
 ```
+
+#### debug node in chrome dev tool
+
+1. go `chrome://inspect`
+
+```bash
+node 6.js
+node --inspect 7.js
+```
